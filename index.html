@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BancoAcessível - Abra sua Conta Digital</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  /* ============================================================
+     ARMADILHAS INTENCIONAIS DE ACESSIBILIDADE / UX / UI
+     Esta página é um estudo de caso para "Audit Inclusivo".
+     Não use este código como referência de boas práticas.
+     ============================================================ */
+
+  /* Trap 1: Remove TODOS os focos visuais (WCAG 2.4.7 FAIL) */
+  *:focus,
+  *:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit !important;
+  }
+
+  /* Trap 1: Texto quase invisível sobre fundo branco (WCAG 1.4.3 FAIL) */
+  .text-almost-invisible { color: #E5E7EB; }
+  .text-very-light       { color: #D1D5DB; }
+  .text-barely-there     { color: #F3F4F6; }
+
+  /* Trap 1: Tipografia minúscula para textos importantes (WCAG 1.4.4 FAIL) */
+  .text-tiny-8  { font-size: 8px;  line-height: 10px; }
+  .text-tiny-9  { font-size: 9px;  line-height: 11px; }
+  .text-tiny-10 { font-size: 10px; line-height: 12px; }
+
+  /* Trap 1: Labels apagadas */
+  .label-barely-visible {
+    color: #D1D5DB;
+    font-size: 11px;
+    font-weight: 400;
+  }
+
+  /* Trap 2: Erro indicado APENAS por cor (WCAG 1.4.1 FAIL) */
+  .error-color-only {
+    border-color: #FCA5A5 !important; /* vermelho claro */
+    background-color: #FFFFFF !important;
+    /* sem ícone, sem mensagem, sem mudança de texto */
+  }
+
+  /* Trap 3: Checkbox microscópico (área de toque < 44px - WCAG 2.5.5 FAIL) */
+  .tiny-checkbox {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    min-height: 8px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  /* Trap 3: Botão principal minúsculo (área de toque < 44px) */
+  .tiny-touch-button {
+    height: 20px;
+    width: 88px;
+    font-size: 7px;
+    padding: 0 3px;
+    line-height: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    letter-spacing: -0.5px;
+    cursor: pointer;
+  }
+
+  /* Trap 4: Banners piscando (WCAG 2.2.2 / 2.3.1 FAIL) */
+  @keyframes flashBg {
+    0%, 100% { background-color: #FEF9C3; color: #854D0E; }
+    25%      { background-color: #F59E0B; color: #FFFFFF; }
+    50%      { background-color: #EF4444; color: #FFFFFF; }
+    75%      { background-color: #8B5CF6; color: #FFFFFF; }
+  }
+  .flashing-banner { animation: flashBg 0.6s infinite; }
+
+  @keyframes blinkText {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.25; }
+  }
+  .blink-text { animation: blinkText 0.5s infinite; }
+
+  /* Trap 4: Botão "AVANÇAR" disfarçado (cinza apagado) */
+  .disguised-advance {
+    background-color: #F3F4F6;
+    color: #D1D5DB;
+    border: 1px solid #E5E7EB;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* Trap 4: Botão "CANCELAR" chamativo (azul escuro, sombra) */
+  .eye-catching-cancel {
+    background-color: #1E3A8A;
+    color: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.45);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .eye-catching-cancel:hover {
+    background-color: #1E40AF;
+    transform: scale(1.03);
+  }
+
+  /* Simulação de viewport de celular */
+  body {
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+    background: linear-gradient(135deg, #EFF6FF 0%, #E0E7FF 50%, #F3E8FF 100%);
+    min-height: 100vh;
+  }
+
+  /* Placeholders quase invisíveis */
+  input::placeholder,
+  textarea::placeholder {
+    color: #E5E7EB;
+  }
+
+  /* Campos com aparência "moderna" mas sem feedback */
+  .modern-input {
+    border: 1px solid #E5E7EB;
+    background-color: #FFFFFF;
+    transition: none;
+  }
+
+  /* Esconde o asterisco de obrigatório quase totalmente */
+  .required-mark { color: #F3F4F6; }
+</style>
+</head>
+<body class="p-3">
+
+  <!-- ============================================================
+       Trap 4: Banner promocional piscando no topo da tela
+       ============================================================ -->
+  <div class="flashing-banner text-center py-2 px-3 mb-2 rounded-lg text-xs font-bold sticky top-0 z-50">
+    🎉 PARABÉNS! Você foi PRÉ-APROVADO para R$ 50.000 em limite! Cadastre-se AGORA!
+  </div>
+
+  <!-- Trap 4: Banner secundário piscando -->
+  <div class="blink-text bg-yellow-100 text-yellow-800 text-center py-1 px-2 mb-3 rounded font-semibold text-tiny-9">
+    ⚡ Oferta exclusiva expira em 00:59 segundos! Não perca!
+  </div>
+
+  <!-- ============================================================
+       Card principal do formulário
+       ============================================================ -->
+  <div class="bg-white rounded-2xl shadow-xl p-5 relative">
+
+    <!-- Cabeçalho com logo + botão FINALIZAR minúsculo (Trap 3) -->
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-md">
+            <span class="text-white font-bold text-base">B</span>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-blue-900 leading-tight">BancoAcessível</h1>
+            <p class="text-almost-invisible text-tiny-10 mt-0.5">Seu banco digital, simples e moderno</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trap 3: Botão "FINALIZAR CADASTRO" minúsculo no canto superior direito -->
+      <button type="button"
+              class="tiny-touch-button bg-green-500 hover:bg-green-600 text-white rounded font-bold absolute top-2 right-2"
+              onclick="finalizarCadastro()"
+              title="Finalizar Cadastro">
+        FINALIZAR CADASTRO
+      </button>
+    </div>
+
+    <h2 class="text-base font-semibold text-gray-800 mb-1">Abra sua conta digital</h2>
+    <p class="text-very-light text-tiny-10 mb-5">
+      Preencha todos os campos abaixo para começar a usar o BancoAcessível hoje mesmo.
+    </p>
+
+    <!-- ============================================================
+         Trap 4: Formulário gigante de coluna única (sem divisão de etapas)
+         ============================================================ -->
+    <form id="formCadastro" class="space-y-3" onsubmit="return false;">
+
+      <!-- CPF — Trap 2: erro indicado APENAS por cor -->
+      <div>
+        <label for="cpf" class="label-barely-visible block mb-1">
+          CPF <span class="required-mark">*</span>
+        </label>
+        <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700"
+               oninput="validarCpfCor(this)">
+        <!-- Sem mensagem de erro abaixo — apenas a borda muda de cor -->
+      </div>
+
+      <!-- RG -->
+      <div>
+        <label for="rg" class="label-barely-visible block mb-1">
+          RG <span class="required-mark">*</span>
+        </label>
+        <input type="text" id="rg" name="rg" placeholder="00.000.000-0"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+      </div>
+
+      <!-- Nome do Pai -->
+      <div>
+        <label for="pai" class="label-barely-visible block mb-1">
+          Nome completo do Pai <span class="required-mark">*</span>
+        </label>
+        <input type="text" id="pai" name="pai" placeholder="Nome do pai"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+      </div>
+
+      <!-- Nome da Mãe -->
+      <div>
+        <label for="mae" class="label-barely-visible block mb-1">
+          Nome completo da Mãe <span class="required-mark">*</span>
+        </label>
+        <input type="text" id="mae" name="mae" placeholder="Nome da mãe"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+      </div>
+
+      <!-- Renda -->
+      <div>
+        <label for="renda" class="label-barely-visible block mb-1">
+          Renda mensal declarada (R$) <span class="required-mark">*</span>
+        </label>
+        <input type="number" id="renda" name="renda" placeholder="0,00" step="0.01"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+        <!-- Trap 1: Aviso de taxa em texto minúsculo e quase invisível -->
+        <p class="text-tiny-8 text-almost-invisible mt-1">
+          Tarifa de análise de cadastro: R$ 47,90 descontados da primeira movimentação. Sujeito a alteração sem aviso prévio. Outras taxas podem aplicar.
+        </p>
+      </div>
+
+      <!-- CEP -->
+      <div>
+        <label for="cep" class="label-barely-visible block mb-1">
+          CEP <span class="required-mark">*</span>
+        </label>
+        <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+      </div>
+
+      <!-- Bairro -->
+      <div>
+        <label for="bairro" class="label-barely-visible block mb-1">
+          Bairro <span class="required-mark">*</span>
+        </label>
+        <input type="text" id="bairro" name="bairro" placeholder="Seu bairro"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+      </div>
+
+      <!-- Endereço -->
+      <div>
+        <label for="endereco" class="label-barely-visible block mb-1">
+          Endereço completo <span class="required-mark">*</span>
+        </label>
+        <input type="text" id="endereco" name="endereco" placeholder="Rua, número, complemento"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+      </div>
+
+      <!-- Telefone 1 -->
+      <div>
+        <label for="tel1" class="label-barely-visible block mb-1">
+          Telefone principal <span class="required-mark">*</span>
+        </label>
+        <input type="tel" id="tel1" name="tel1" placeholder="(00) 0000-0000"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+      </div>
+
+      <!-- Telefone 2 -->
+      <div>
+        <label for="tel2" class="label-barely-visible block mb-1">
+          Telefone secundário <span class="required-mark">*</span>
+        </label>
+        <input type="tel" id="tel2" name="tel2" placeholder="(00) 90000-0000"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+      </div>
+
+      <!-- E-mail — Trap 2: erro indicado APENAS por cor -->
+      <div>
+        <label for="email" class="label-barely-visible block mb-1">
+          E-mail <span class="required-mark">*</span>
+        </label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com"
+               class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700"
+               oninput="validarEmailCor(this)">
+        <!-- Sem mensagem de erro abaixo — apenas a borda muda de cor -->
+      </div>
+
+      <!-- Perfil de Investidor -->
+      <div>
+        <label for="perfil" class="label-barely-visible block mb-1">
+          Perfil de investidor <span class="required-mark">*</span>
+        </label>
+        <select id="perfil" name="perfil"
+                class="modern-input w-full px-3 py-2 text-sm rounded-lg text-gray-700">
+          <option value="">Selecione...</option>
+          <option value="conservador">Conservador</option>
+          <option value="moderado">Moderado</option>
+          <option value="arrojado">Arrojado</option>
+        </select>
+        <!-- Trap 1: Termo importante em texto minúsculo -->
+        <p class="text-tiny-8 text-almost-invisible mt-1">
+          Ao selecionar seu perfil, você autoriza automaticamente a aplicação de 100% do seu saldo em fundos de investimento de risco compatível, com taxa de administração de 2,5% ao ano e possível perda do capital investido.
+        </p>
+      </div>
+
+      <!-- ============================================================
+           Trap 3: Checkbox de termos de uso microscópico (8x8px)
+           ============================================================ -->
+      <div class="flex items-start gap-1 mt-3">
+        <input type="checkbox" id="termos" name="termos" class="tiny-checkbox mt-1">
+        <label for="termos" class="text-tiny-9 text-very-light leading-tight">
+          Li e concordo com os Termos de Uso, Política de Privacidade, e autorizo o compartilhamento dos meus dados com parceiros comerciais terceiros para fins de marketing, publicidade e oferta de produtos.
+        </label>
+      </div>
+
+      <!-- Trap 1: Aviso de tarifa escondido em texto minúsculo -->
+      <p class="text-tiny-8 text-almost-invisible mt-3 leading-tight">
+        Importante: a manutenção da conta digital é gratuita nos primeiros 30 dias. Após esse período, será cobrada uma tarifa mensal de R$ 39,90. Transferências acima de R$ 500 terão taxa de 1,5% por operação. Saques em caixas eletrônicos custam R$ 8,50 cada. Consulte o regulamento completo em nosso portal.
+      </p>
+
+      <!-- ============================================================
+           Trap 4: Botões CANCELAR (chamativo) + AVANÇAR (disfarçado)
+           ============================================================ -->
+      <div class="flex gap-2 pt-4">
+        <!-- Botão CANCELAR — azul escuro chamativo -->
+        <button type="button"
+                class="eye-catching-cancel flex-1 py-3 rounded-lg text-sm transition-all">
+          CANCELAR
+        </button>
+
+        <!-- Botão AVANÇAR — cinza apagado disfarçado -->
+        <button type="button"
+                class="disguised-advance flex-1 py-3 rounded-lg text-sm"
+                onclick="avancarCadastro()">
+          AVANÇAR
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- Rodapé com CNPJ quase invisível -->
+  <div class="text-center mt-4 mb-6 px-2">
+    <p class="text-tiny-8 text-almost-invisible leading-tight">
+      BancoAcessível S.A. — CNPJ 00.000.000/0001-00. Esta página é um estudo de caso educacional para auditoria de acessibilidade (Audit Inclusivo). Não é uma instituição financeira real.
+    </p>
+  </div>
+
+  <!-- Toast simples para feedback -->
+  <div id="toast"
+       class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    Cadastro finalizado com sucesso!
+  </div>
+
+<script>
+  /* ============================================================
+     Trap 2: Validação APENAS por cor (sem ícone, sem mensagem)
+     ============================================================ */
+  function validarCpfCor(input) {
+    const valor = input.value.replace(/\D/g, '');
+    // CPF válido tem exatamente 11 dígitos
+    if (valor.length > 0 && valor.length !== 11) {
+      input.classList.add('error-color-only');
+    } else {
+      input.classList.remove('error-color-only');
+    }
+  }
+
+  function validarEmailCor(input) {
+    const valor = input.value.trim();
+    if (valor.length > 0 && !valor.includes('@')) {
+      input.classList.add('error-color-only');
+    } else {
+      input.classList.remove('error-color-only');
+    }
+  }
+
+  /* Ação do botão AVANÇAR (disfarçado) */
+  function avancarCadastro() {
+    mostrarToast('Etapa enviada... mas há mais campos adiante.');
+  }
+
+  /* Ação do botão FINALIZAR CADASTRO (minúsculo) */
+  function finalizarCadastro() {
+    const termos = document.getElementById('termos');
+    if (!termos.checked) {
+      // Sem feedback acessível — só uma borda vermelha clara no checkbox
+      termos.style.outline = '1px solid #FCA5A5';
+      mostrarToast('Não foi possível finalizar.');
+      return;
+    }
+    mostrarToast('Cadastro finalizado com sucesso!');
+  }
+
+  function mostrarToast(mensagem) {
+    const toast = document.getElementById('toast');
+    toast.textContent = mensagem;
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+  }
+</script>
+
+</body>
+</html>
